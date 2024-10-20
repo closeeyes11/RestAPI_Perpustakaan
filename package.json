@@ -21,5 +21,10 @@
   "bugs": {
     "url": "https://github.com/closeeyes11/RestAPI_Perpustakaan/issues"
   },
-  "homepage": "https://github.com/closeeyes11/RestAPI_Perpustakaan#readme"
+  "homepage": "https://github.com/closeeyes11/RestAPI_Perpustakaan#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.1",
+    "mysql": "^2.18.1"
+  }
 }
