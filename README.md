@@ -24,17 +24,16 @@ Library Management System adalah aplikasi berbasis REST API untuk mengelola data
    ```bash
    git clone https://github.com/your-username/library-management-system.git
    cd library-management-system
-Install Dependencies Pastikan Anda berada di root directory aplikasi.
 
-bash
-Copy code
+## Install Dependencies Pastikan Anda berada di root directory aplikasi
 npm install
-Konfigurasi Database
 
-Buat database MySQL dengan nama library_db.
-Jalankan script SQL berikut untuk membuat tabel-tabel yang diperlukan:
-sql
-Copy code
+
+## Konfigurasi Database
+
+**Buat database MySQL dengan nama library_db.**
+**Jalankan script SQL berikut untuk membuat tabel-tabel yang diperlukan:**
+
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
@@ -68,49 +67,52 @@ CREATE TABLE borrow (
     FOREIGN KEY (member_id) REFERENCES members(id),
     FOREIGN KEY (book_id) REFERENCES books(id)
 );
-Konfigurasi File .env Buat file .env di root directory untuk menyimpan variabel lingkungan:
 
-makefile
-Copy code
+
+**Konfigurasi File .env Buat file .env di root directory untuk menyimpan variabel lingkungan:**
+
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
 DB_NAME=library_db
 JWT_SECRET=your_jwt_secret
-Jalankan Aplikasi Setelah melakukan instalasi dan konfigurasi, Anda dapat menjalankan aplikasi dengan:
 
-bash
-Copy code
+
+**Jalankan Aplikasi Setelah melakukan instalasi dan konfigurasi, Anda dapat menjalankan aplikasi dengan:**
+
 npm start
-Endpoints API
-Autentikasi
-Register User
+
+
+**Endpoints API**
+**Autentikasi**
+1. **Register User**
 
 Endpoint: POST /auth/register
 Body:
-json
-Copy code
+
 {
   "username": "your_username",
   "password": "your_password"
 }
-Login User
+
+
+**Login User**
 
 Endpoint: POST /auth/login
 Body:
-json
-Copy code
+
 {
   "username": "your_username",
   "password": "your_password"
 }
-Buku
-Tambah Buku
+
+*
+**Buku**
+**Tambah Buku**
 
 Endpoint: POST /books
 Body:
-json
-Copy code
+
 {
   "title": "Book Title",
   "author": "Author Name",
@@ -118,24 +120,31 @@ Copy code
   "year": 2024,
   "stock": 10
 }
-Dapatkan Semua Buku
+
+
+**Dapatkan Semua Buku**
 
 Endpoint: GET /books?page=1&limit=10
 Query Parameters:
 page: Nomor halaman yang ingin diambil (default: 1).
 limit: Jumlah buku per halaman (default: 10).
-Dapatkan Buku Berdasarkan ID
+
+
+**Dapatkan Buku Berdasarkan ID**
 
 Endpoint: GET /books/:id
-Cari Buku
+
+
+**Cari Buku**
 
 Endpoint: GET /books?search=<keyword>
-Update Buku
+
+
+**Update Buku**
 
 Endpoint: PUT /books/:id
 Body:
-json
-Copy code
+
 {
   "title": "Updated Book Title",
   "author": "Updated Author Name",
@@ -143,27 +152,33 @@ Copy code
   "year": 2025,
   "stock": 5
 }
-Hapus Buku
+
+
+**Hapus Buku**
 
 Endpoint: DELETE /books/:id
-Anggota
-Tambah Anggota
+
+
+**Anggota**
+**Tambah Anggota**
 
 Endpoint: POST /members
 Body:
-json
-Copy code
+
 {
   "name": "Member Name",
   "email": "member@example.com",
   "address": "Member Address",
   "phone": "123456789"
 }
-Dapatkan Semua Anggota
+
+
+**Dapatkan Semua Anggota**
 
 Endpoint: GET /members?page=1&limit=10
-Dapatkan Anggota Berdasarkan ID
+
+
+**Dapatkan Anggota Berdasarkan ID**
 
 Endpoint: GET /members/:id
-Lisensi
-MIT License
+
