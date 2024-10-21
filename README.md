@@ -85,7 +85,8 @@ npm start
 
 **Endpoints API**
 **Autentikasi**
-1. **Register User**
+
+**Register User**
 
 Endpoint: POST /auth/register
 Body:
