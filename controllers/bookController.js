@@ -1,93 +1,101 @@
-const db = require('../config/db'); // Mengimpor koneksi database
+const db = require('../config/db');
 
 const BookController = {
-    // Method untuk menambahkan buku baru
     create: (req, res) => {
-        const { title, author, publisher, year, stock } = req.body; // Mengambil data buku dari request body
+        const { title, author, publisher, year, stock } = req.body;
 
-        // Validasi: Pastikan semua field diisi
         if (!title || !author || !publisher || !year || stock === undefined) {
-            return res.status(400).send({ message: 'All fields are required.' }); // Mengembalikan status 400 jika ada field yang kosong
+            return res.status(400).send({ message: 'All fields are required.' });
         }
 
-        // Query untuk menambahkan buku ke dalam database
         db.query('INSERT INTO books (title, author, publisher, year, stock) VALUES (?, ?, ?, ?, ?)', 
         [title, author, publisher, year, stock], (err, results) => {
             if (err) {
-                console.error(err); // Menampilkan error di console
-                return res.status(500).send('Error on the server.'); // Mengembalikan status 500 jika terjadi error
+                console.error(err);
+                return res.status(500).send('Error on the server.');
             }
-            res.status(201).send({ message: 'Book added successfully!', bookId: results.insertId }); // Mengembalikan status 201 jika berhasil
+            res.status(201).send({ message: 'Book added successfully!', bookId: results.insertId });
         });
     },
 
-    // Method untuk mendapatkan semua buku
+    // Fitur pencarian buku berdasarkan judul atau penulis, sekaligus pagination
     getAll: (req, res) => {
-        db.query('SELECT * FROM books', (err, results) => {
+        const { search, page = 1, limit = 10 } = req.query; // Default page 1, limit 10
+        const offset = (page - 1) * limit;
+
+        let query = 'SELECT * FROM books WHERE 1=1'; // Kondisi default
+        const queryParams = [];
+
+        // Jika ada parameter search, tambahkan kondisi untuk pencarian berdasarkan judul atau penulis
+        if (search) {
+            query += ' AND (title LIKE ? OR author LIKE ?)';
+            queryParams.push(`%${search}%`, `%${search}%`);
+        }
+
+        // Tambahkan pagination ke query
+        query += ' LIMIT ? OFFSET ?';
+        queryParams.push(parseInt(limit), parseInt(offset));
+
+        // Jalankan query ke database
+        db.query(query, queryParams, (err, results) => {
             if (err) {
-                console.error(err); // Menampilkan error di console
-                return res.status(500).send('Error on the server.'); // Mengembalikan status 500 jika terjadi error
+                console.error(err);
+                return res.status(500).send('Error on the server.');
             }
-            res.status(200).send(results); // Mengembalikan status 200 dan data buku
+            res.status(200).send(results);
         });
     },
 
-    // Method untuk mendapatkan buku berdasarkan ID
     getById: (req, res) => {
-        const bookId = req.params.id; // Mengambil ID buku dari parameter URL
+        const bookId = req.params.id;
 
         db.query('SELECT * FROM books WHERE id = ?', [bookId], (err, results) => {
             if (err) {
-                console.error(err); // Menampilkan error di console
-                return res.status(500).send('Error on the server.'); // Mengembalikan status 500 jika terjadi error
+                console.error(err);
+                return res.status(500).send('Error on the server.');
             }
             if (!results.length) {
-                return res.status(404).send({ message: 'Book not found.' }); // Mengembalikan status 404 jika buku tidak ditemukan
+                return res.status(404).send({ message: 'Book not found.' });
             }
-            res.status(200).send(results[0]); // Mengembalikan status 200 dan data buku
+            res.status(200).send(results[0]);
         });
     },
 
-    // Method untuk memperbarui data buku
     update: (req, res) => {
-        const bookId = req.params.id; // Mengambil ID buku dari parameter URL
-        const { title, author, publisher, year, stock } = req.body; // Mengambil data buku dari request body
+        const bookId = req.params.id;
+        const { title, author, publisher, year, stock } = req.body;
 
-        // Validasi: Pastikan semua field diisi
         if (!title || !author || !publisher || !year || stock === undefined) {
-            return res.status(400).send({ message: 'All fields are required.' }); // Mengembalikan status 400 jika ada field yang kosong
+            return res.status(400).send({ message: 'All fields are required.' });
         }
 
-        // Query untuk memperbarui buku di database
         db.query('UPDATE books SET title = ?, author = ?, publisher = ?, year = ?, stock = ? WHERE id = ?', 
         [title, author, publisher, year, stock, bookId], (err, results) => {
             if (err) {
-                console.error(err); // Menampilkan error di console
-                return res.status(500).send('Error on the server.'); // Mengembalikan status 500 jika terjadi error
+                console.error(err);
+                return res.status(500).send('Error on the server.');
             }
             if (results.affectedRows === 0) {
-                return res.status(404).send({ message: 'Book not found.' }); // Mengembalikan status 404 jika buku tidak ditemukan
+                return res.status(404).send({ message: 'Book not found.' });
             }
-            res.status(200).send({ message: 'Book updated successfully!' }); // Mengembalikan status 200 jika berhasil
+            res.status(200).send({ message: 'Book updated successfully!' });
         });
     },
 
-    // Method untuk menghapus buku
     delete: (req, res) => {
-        const bookId = req.params.id; // Mengambil ID buku dari parameter URL
+        const bookId = req.params.id;
 
-        // Query untuk menghapus buku dari database
         db.query('DELETE FROM books WHERE id = ?', [bookId], (err, results) => {
             if (err) {
-                console.error(err); // Menampilkan error di console
-                return res.status(500).send('Error on the server.'); // Mengembalikan status 500 jika terjadi error
+                console.error(err);
+                return res.status(500).send('Error on the server.');
             }
             if (results.affectedRows === 0) {
-                return res.status(404).send({ message: 'Book not found.' }); // Mengembalikan status 404 jika buku tidak ditemukan
+                return res.status(404).send({ message: 'Book not found.' });
             }
-            res.status(200).send({ message: 'Book deleted successfully!' }); // Mengembalikan status 200 jika berhasil dihapus
+            res.status(200).send({ message: 'Book deleted successfully!' });
         });
     }
 };
 
-module.exports = BookController; // Mengekspor BookController untuk digunakan di bagian lain dari aplikasi
+module.exports = BookController;
